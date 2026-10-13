@@ -14,12 +14,13 @@ The script automates project setup, roster generation, configuration management,
 .
 ├── deploy_agent.sh
 ├── README.md
-├── attendance_checker.py
-├── assets.csv
-└── config.json
+└── templates/
+    ├── attendance_checker.py
+    ├── assets.csv
+    └── config.json
 ```
 
-The source files are the original files supplied for the assignment and should remain unchanged.
+The source files are the original files supplied for the assignment and should remain unchanged. They are kept in a `templates/` folder alongside `deploy_agent.sh`.
 
 ### Deployed Application Structure
 
@@ -54,7 +55,7 @@ The script checks that Python 3 and `zip` are available before deployment.
 ## Installation and Execution
 
 1. Clone or download this repository.
-2. Ensure the three source files are present in the repository root.
+2. Ensure the three source files are present in the `templates/` folder.
 3. Open a terminal in the repository root.
 4. Make the script executable:
 
@@ -80,7 +81,7 @@ The deployment feature:
 - Prompts the user for a project name.
 - Creates the project directory and required subdirectories.
 - Checks for an existing project and requests confirmation before overwriting it.
-- Copies `attendance_checker.py` and `config.json` from the repository root.
+- Copies `attendance_checker.py` and `config.json` from the `templates/` folder.
 - Allows the user to choose between copying an existing roster and generating a fresh roster.
 - Sets the required file permissions.
 - Offers an option to update the attendance alert thresholds.
@@ -228,5 +229,5 @@ The demonstration should cover the implementation approach, deployment, both ros
 ## Author
 
 **Name:** Teninlanimi Taiwo  
-**GitHub:** [Your GitHub Profile URL]  
+**GitHub:** https://github.com/teni-taiwo-alu/deploy_agent_teni-taiwo-alu
 **Repository:** `deploy_agent_teni-taiwo-alu`
