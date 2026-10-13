@@ -192,23 +192,19 @@ deploy_project() {
 
     while true; do
         read -r -p "Choose A or B: " roster
-        case "$roster" in
-            A|a)
-                copy_roster "$PROJECT_DIR/Helpers/assets.csv" || return 1
-                # Template roster already has 4 recorded sessions.
-                update_config "$config" total_sessions 5
-                break
-                ;;
-            B|b)
-                generate_roster "$PROJECT_DIR/Helpers/assets.csv" || return 1
-                # A fresh roster has no previous sessions.
-                update_config "$config" total_sessions 1
-                break
-                ;;
-            *)
-                echo "Please choose A or B."
-                ;;
-        esac
+        if [ "$roster" = "A" ] || [ "$roster" = "a" ]; then
+            copy_roster "$PROJECT_DIR/Helpers/assets.csv" || return 1
+            # Template roster already has 4 recorded sessions.
+            update_config "$config" total_sessions 5
+            break
+        elif [ "$roster" = "B" ] || [ "$roster" = "b" ]; then
+            generate_roster "$PROJECT_DIR/Helpers/assets.csv" || return 1
+            # A fresh roster has no previous sessions.
+            update_config "$config" total_sessions 1
+            break
+        else
+            echo "Please choose A or B."
+        fi
     done
 
     # Script must be executable, config should be private.
@@ -293,26 +289,20 @@ while true; do
 
     read -r -p "Select an option: " choice || exit 0
 
-    case "$choice" in
-        1)
-            DEPLOYING=1
-            deploy_project
-            DEPLOYING=0
-            ;;
-        2)
-            read -r -p "Enter deployed project name: " name
-            run_project "$PWD/attendance_tracker_$name"
-            ;;
-        3)
-            read -r -p "Enter deployed project name: " name
-            archive_logs "$name"
-            ;;
-        4)
-            echo "Goodbye."
-            exit 0
-            ;;
-        *)
-            echo "Invalid option. Choose 1, 2, 3 or 4."
-            ;;
-    esac
+    if [ "$choice" = "1" ]; then
+        DEPLOYING=1
+        deploy_project
+        DEPLOYING=0
+    elif [ "$choice" = "2" ]; then
+        read -r -p "Enter deployed project name: " name
+        run_project "$PWD/attendance_tracker_$name"
+    elif [ "$choice" = "3" ]; then
+        read -r -p "Enter deployed project name: " name
+        archive_logs "$name"
+    elif [ "$choice" = "4" ]; then
+        echo "Goodbye."
+        exit 0
+    else
+        echo "Invalid option. Choose 1, 2, 3 or 4."
+    fi
 done
