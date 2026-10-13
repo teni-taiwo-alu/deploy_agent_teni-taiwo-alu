@@ -9,9 +9,7 @@ TEMPLATE_DIR="$SCRIPT_DIR/templates"
 DEPLOYING=0
 PROJECT_DIR=""
 
-# --------------------------------------------------
 # Check python3, zip and the source files exist
-# --------------------------------------------------
 check_dependencies() {
     command -v python3 >/dev/null 2>&1 || { echo "ERROR: python3 is not installed."; return 1; }
     command -v zip >/dev/null 2>&1 || { echo "ERROR: zip is not installed."; return 1; }
@@ -24,9 +22,7 @@ check_dependencies() {
     done
 }
 
-# --------------------------------------------------
 # Ask the user for a positive whole number
-# --------------------------------------------------
 ask_number() {
     local value
     while true; do
@@ -39,18 +35,14 @@ ask_number() {
     done
 }
 
-# --------------------------------------------------
 # Change one number in config.json using sed
-# --------------------------------------------------
 update_config() {
     local config="$1" key="$2" value="$3"
     sed -E -i.bak "s/(\"$key\"[[:space:]]*:[[:space:]]*)[0-9]+/\1$value/" "$config"
     rm -f "$config.bak"
 }
 
-# --------------------------------------------------
 # Option A: copy rows from the template roster
-# --------------------------------------------------
 copy_roster() {
     local destination="$1"
     local count
@@ -93,9 +85,7 @@ generate_roster() {
     echo "Generated a fresh roster with $count students."
 }
 
-# --------------------------------------------------
 # Optionally change the alert thresholds in config.json
-# --------------------------------------------------
 configure_thresholds() {
     local config="$1"
     local answer warning failure
@@ -135,9 +125,7 @@ configure_thresholds() {
     echo "Thresholds updated: warning=$warning%, failure=$failure%."
 }
 
-# --------------------------------------------------
 # Run an already deployed project
-# --------------------------------------------------
 run_project() {
     local directory="$1"
 
@@ -150,9 +138,7 @@ run_project() {
     ( cd "$directory" && python3 attendance_checker.py )
 }
 
-# --------------------------------------------------
 # Deploy the application
-# --------------------------------------------------
 deploy_project() {
     local name choice roster config
 
@@ -220,9 +206,7 @@ deploy_project() {
     run_project "$PROJECT_DIR"
 }
 
-# --------------------------------------------------
 # Copy the report logs into archives with a timestamp
-# --------------------------------------------------
 archive_logs() {
     local name="$1"
     local directory="$PWD/attendance_tracker_$name"
@@ -248,9 +232,7 @@ archive_logs() {
     done
 }
 
-# --------------------------------------------------
 # If deployment is interrupted, zip what exists so far
-# --------------------------------------------------
 cleanup_interrupt() {
     if [ "$DEPLOYING" -ne 1 ]; then
         exit 130
@@ -274,9 +256,7 @@ cleanup_interrupt() {
 
 trap 'cleanup_interrupt' INT TSTP
 
-# --------------------------------------------------
-# Main menu
-# --------------------------------------------------
+# The Main Menu
 while true; do
     echo
     echo "===================================="
