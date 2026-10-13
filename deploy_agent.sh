@@ -253,6 +253,32 @@ archive_logs() {
 }
 
 # --------------------------------------------------
+# If deployment is interrupted, zip what exists so far
+# --------------------------------------------------
+cleanup_interrupt() {
+    if [ "$DEPLOYING" -ne 1 ]; then
+        exit 130
+    fi
+
+    DEPLOYING=0
+    echo
+    echo "Deployment interrupted. Archiving the incomplete project..."
+
+    if [ -d "$PROJECT_DIR" ]; then
+        if ( cd "$(dirname "$PROJECT_DIR")" && zip -qr "$(basename "$PROJECT_DIR")_archive.zip" "$(basename "$PROJECT_DIR")" ); then
+            echo "Incomplete project archived as $(basename "$PROJECT_DIR")_archive.zip"
+            rm -rf "$PROJECT_DIR"
+        else
+            echo "ERROR: ZIP creation failed. Keeping the incomplete directory."
+        fi
+    fi
+
+    exit 130
+}
+
+trap 'cleanup_interrupt' INT TSTP
+
+# --------------------------------------------------
 # Main menu
 # --------------------------------------------------
 while true; do
