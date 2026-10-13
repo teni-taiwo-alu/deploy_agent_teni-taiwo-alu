@@ -54,7 +54,7 @@ The script checks that Python 3 and `zip` are available before deployment.
 ## Installation and Execution
 
 1. Clone or download this repository.
-2. Ensure the three source files are present at the repository root (`.
+2. Ensure the three source files are present in the repository root.
 3. Open a terminal in the repository root.
 4. Make the script executable:
 
