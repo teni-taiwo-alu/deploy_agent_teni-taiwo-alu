@@ -225,6 +225,34 @@ deploy_project() {
 }
 
 # --------------------------------------------------
+# Copy the report logs into archives with a timestamp
+# --------------------------------------------------
+archive_logs() {
+    local name="$1"
+    local directory="$PWD/attendance_tracker_$name"
+    local stamp
+
+    if [ ! -d "$directory" ]; then
+        echo "ERROR: No deployed project found at $directory"
+        return 1
+    fi
+
+    stamp="$(date '+%Y%m%d_%H%M%S')"
+    mkdir -p "$directory/archives/attendance" "$directory/archives/absent"
+
+    # Archive each log if it exists.
+    for log_type in attendance absent; do
+        if [ -f "$directory/reports/$log_type.log" ]; then
+            cp "$directory/reports/$log_type.log" \
+               "$directory/archives/$log_type/${log_type}_${stamp}.log"
+            echo "Archived: $directory/archives/$log_type/${log_type}_${stamp}.log"
+        else
+            echo "No $log_type.log found; skipping."
+        fi
+    done
+}
+
+# --------------------------------------------------
 # Main menu
 # --------------------------------------------------
 while true; do
@@ -245,8 +273,14 @@ while true; do
             deploy_project
             DEPLOYING=0
             ;;
-        2) echo "Run feature not added yet." ;;
-        3) echo "Archive feature not added yet." ;;
+        2)
+            read -r -p "Enter deployed project name: " name
+            run_project "$PWD/attendance_tracker_$name"
+            ;;
+        3)
+            read -r -p "Enter deployed project name: " name
+            archive_logs "$name"
+            ;;
         4)
             echo "Goodbye."
             exit 0
