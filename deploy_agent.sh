@@ -3,6 +3,7 @@
 # Attendance Tracker Deployment Agent
 # Deploys, runs and archives the attendance checker app.
 
+# Get the script directory and template directory
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 TEMPLATE_DIR="$SCRIPT_DIR/templates"
 
@@ -14,6 +15,7 @@ check_dependencies() {
     command -v python3 >/dev/null 2>&1 || { echo "ERROR: python3 is not installed."; return 1; }
     command -v zip >/dev/null 2>&1 || { echo "ERROR: zip is not installed."; return 1; }
 
+    # Check if the required files exist
     for file in attendance_checker.py assets.csv config.json; do
         if [ ! -f "$TEMPLATE_DIR/$file" ]; then
             echo "ERROR: Missing file: $TEMPLATE_DIR/$file"
@@ -27,18 +29,23 @@ ask_number() {
     local value
     while true; do
         read -r -p "$1" value
+        # Check if the input is a positive whole number
         if [[ "$value" =~ ^[1-9][0-9]*$ ]]; then
             echo "$value"
             return
         fi
+        # If the input is not a positive whole number, ask the user again
         echo "Please enter a positive whole number."
     done
 }
 
 # Change one number in config.json using sed
 update_config() {
+    # Get the config file, key and value from the arguments
     local config="$1" key="$2" value="$3"
+    # Update the config file using sed
     sed -E -i.bak "s/(\"$key\"[[:space:]]*:[[:space:]]*)[0-9]+/\1$value/" "$config"
+    # Remove the backup file
     rm -f "$config.bak"
 }
 
@@ -52,6 +59,7 @@ copy_roster() {
     # Line 1 is the header, so copy count + 1 lines.
     head -n $((count + 1)) "$TEMPLATE_DIR/assets.csv" > "$destination"
 
+    # Check if the number of lines in the destination file is less than the number of students to copy
     if [ "$(wc -l < "$destination")" -lt $((count + 1)) ]; then
         echo "ERROR: The template roster does not have that many students."
         return 1
@@ -60,9 +68,7 @@ copy_roster() {
     echo "Copied $count students from the template roster."
 }
 
-# --------------------------------------------------
 # Option B: generate a fresh roster from sample names
-# --------------------------------------------------
 generate_roster() {
     local destination="$1"
     local count i
@@ -97,6 +103,7 @@ configure_thresholds() {
         return
     fi
 
+    # Ask the user for the warning threshold
     while true; do
         read -r -p "Warning threshold [75]: " warning
         warning="${warning:-75}"
@@ -106,10 +113,12 @@ configure_thresholds() {
         echo "Enter a whole number between 0 and 100."
     done
 
+    # Ask the user for the failure threshold
     while true; do
         read -r -p "Failure threshold [50]: " failure
         failure="${failure:-50}"
         if [[ "$failure" =~ ^[0-9]+$ ]] && [ "$failure" -le 100 ]; then
+            # Check if the warning threshold is greater than the failure threshold
             if [ "$warning" -gt "$failure" ]; then
                 break
             fi
@@ -119,6 +128,7 @@ configure_thresholds() {
         fi
     done
 
+    # Update the config file with the warning and failure thresholds
     update_config "$config" warning "$warning"
     update_config "$config" failure "$failure"
 
@@ -129,22 +139,28 @@ configure_thresholds() {
 run_project() {
     local directory="$1"
 
+    # We check if the attendance checker script exists
     if [ ! -f "$directory/attendance_checker.py" ]; then
         echo "ERROR: No deployed project found at $directory"
         return 1
     fi
 
+    # If it exists, we start the attendance application
     echo "Starting attendance application..."
     ( cd "$directory" && python3 attendance_checker.py )
 }
 
 # Deploy the application
 deploy_project() {
+    # Variables for project name, choice and roster from the arguments
     local name choice roster config
 
+    # Check if the dependencies are met
     check_dependencies || return 1
 
+    # Ask the user for a project name
     read -r -p "Enter a project name (letters, numbers, _ or -): " name
+
 
     if [[ ! "$name" =~ ^[a-zA-Z0-9_-]+$ ]]; then
         echo "ERROR: Invalid project name."

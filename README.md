@@ -222,12 +222,12 @@ The deployed application should be checked against the required directory struct
 
 ## Demonstration Video
 
-**Video link:** [Insert your demonstration video URL here]
+**Video link:** https://drive.google.com/file/d/1Sq37k2LE_BM-nak4o32oLKm_PyXGfjO4/view?usp=sharing
 
-The demonstration should cover the implementation approach, deployment, both roster options, a live attendance-marking session, log archival, and testing of both interruption signals.
+The demonstration video covers the implementation approach, deployment, both roster options, a live attendance-marking session, log archival, and testing of both interruption signals.
 
 ## Author
 
 **Name:** Teninlanimi Taiwo  
-**GitHub:** https://github.com/teni-taiwo-alu/deploy_agent_teni-taiwo-alu
+**GitHub:** https://github.com/teni-taiwo-alu/
 **Repository:** `deploy_agent_teni-taiwo-alu`
